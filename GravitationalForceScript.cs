@@ -64,7 +64,14 @@ public class GravitationalForceScript : MonoBehaviour {
         Vector3 force = CalculateForce(star_mass, planet_mass, r);
         rb_planet.AddForce(force, ForceMode.Force);      //apply this force to the planet
         rb_star.AddForce(-force, ForceMode.Force);       //apply the force in the opposite direction to the star
-        
+
+        //output energy values
+        float KE = CalculateKE(planet_mass, rb_planet.velocity.magnitude);
+        //Debug.Log("Planet KE = " + KE.ToString("F1"));
+        float GPE = CalculateGPE(star_mass, planet_mass, r.magnitude);
+        //Debug.Log("Planet GPE = " + GPE.ToString("F1"));
+        float E = KE + GPE;
+        Debug.Log("Total E = " + E.ToString("F1"));
         
     }
 
@@ -163,4 +170,17 @@ public class GravitationalForceScript : MonoBehaviour {
         
         
     }
+
+    //CALCULATIONS OF THE ORBITAL ENERGIES
+    private float CalculateKE(float mass, float speed)
+    {
+        return 0.5f * mass * speed * speed;
+    }
+
+    private float CalculateGPE(float othermass, float mass, float distance)
+    {
+        return -1 * G * othermass * mass / distance;
+    }
+
+    
 }

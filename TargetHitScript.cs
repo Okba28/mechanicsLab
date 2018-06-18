@@ -17,6 +17,7 @@ public class TargetHitScript : MonoBehaviour {
     {
         if (collision.collider.tag == "cannonball")
         {
+            transform.GetComponent<BoxCollider>().enabled = false;
             Destroy(transform.gameObject, 1f);     //destroy the target object after a delay
             Destroy(sceneMaster.GetComponent<CreatePlinthAndTarget>().plinth);  //destroy plinth instantly
             projectilemaster.AddHit();
