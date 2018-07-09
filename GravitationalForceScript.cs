@@ -7,6 +7,10 @@ using UnityEngine.SceneManagement;
 // Use the rigidbody addforce after calculating the correct force between the two objects.
 // Remove gravity from the simulation as the force of gravity is being calculated and shouldn't be acting towards -y.
 
+    //The distance scale has been chosen so that 1 unit in Unity space is 1AU
+    //Masses are in solar masses
+
+
 public class GravitationalForceScript : MonoBehaviour {
 
     //The scenemaster gameobject
@@ -19,11 +23,11 @@ public class GravitationalForceScript : MonoBehaviour {
 
     //private float G = 6.67408E-11f;     //m^3kg^-1s^-2
     //private float G = 4 * Mathf.PI * Mathf.PI;  //G in units of AU^3yr^-2M(sun)^-1 solar masses, AU and time period of yrs.
-    //private float G = 3.964E-14f;                   //G in unitys AU^3 M(sun)^-1 s^-2: since the time for the fixed update is in seconds, the velocity needs to be in seconds.
-    private float G = 10f;
+    private float G_real = 3.964E-14f;                   //G in units AU^3 M(sun)^-1 s^-2: since the time for the fixed update is in seconds, the velocity needs to be in seconds.
+    private float G = 10f;      //increase G to speed up simulations
 
     //properties of the two bodies
-    private float star_mass;
+    private float star_mass;        //mass is in solar masses
     private float planet_mass;
     private float planet_velocity_start;        //the initial velocities of the bodies in the z direction
     private float star_velocity_start;
@@ -35,7 +39,12 @@ public class GravitationalForceScript : MonoBehaviour {
     public InputField star_vel_UI;
     public InputField start_distance;
     public Button resetButton;
-    
+    public Text total_energy;
+
+    //For calculating the speed we need to store the previous position of the star and planet
+    Vector3 lastPos_planet;
+    Vector3 lastPos_star;
+
     // Use this for initialization
     //The initial system is the earth orbiting the sun
     void Start () {
@@ -49,30 +58,45 @@ public class GravitationalForceScript : MonoBehaviour {
 
         //Add listeners for when the reset button is clicked
         resetButton.onClick.AddListener(delegate { ResetSimulation(); });
+
+        lastPos_planet = planet.position;       //set last positions to the initial positions
+        lastPos_star = star.position;
     }
-    // Update is called once per frame
-    private void Update()
-    {
-        
-    }
+    
+
     //Fixed update should be used with rigidbody physics.
     void FixedUpdate () {
 
-        star_mass = rb_star.mass;
+        star_mass = rb_star.mass;           //set masses here incase the mass is changed during the sim
         planet_mass = rb_planet.mass;
         Vector3 r = CalculateDistance(star, planet);
         Vector3 force = CalculateForce(star_mass, planet_mass, r);
         rb_planet.AddForce(force, ForceMode.Force);      //apply this force to the planet
         rb_star.AddForce(-force, ForceMode.Force);       //apply the force in the opposite direction to the star
 
-        //output energy values
-        float KE = CalculateKE(planet_mass, rb_planet.velocity.magnitude);
-        //Debug.Log("Planet KE = " + KE.ToString("F1"));
+
+        //calculate the speeds of the planet and star since rigidbody velocity (even when dividing by time.fixeddelta time gives incorrect speed)
+        float v_planet = CalculateSpeed(planet.position,lastPos_planet);
+        float v_star = CalculateSpeed(star.position, lastPos_star);
+        //set the last position so that the next velocity can be calculated when fixed update runs again
+        lastPos_planet = planet.position;
+        lastPos_star = star.position;
+
+
+        //output energy of planet
+        float KE_planet = CalculateKE(planet_mass, v_planet);   //get velocity from distance/frame to distance/sec
         float GPE = CalculateGPE(star_mass, planet_mass, r.magnitude);
-        //Debug.Log("Planet GPE = " + GPE.ToString("F1"));
-        float E = KE + GPE;
-        Debug.Log("Total E = " + E.ToString("F1"));
         
+        //output energy values for star
+        float KE_star = CalculateKE(star_mass, v_star);
+
+        //total energy
+        float E = KE_planet + KE_star + GPE;
+
+        float E_rescale = E * (1E20f);              //rescale the energy value for outputting to UI
+        total_energy.text = E_rescale.ToString("E1");
+
+
     }
 
     //Calculate the gravitational force between the two masses
@@ -174,13 +198,19 @@ public class GravitationalForceScript : MonoBehaviour {
     //CALCULATIONS OF THE ORBITAL ENERGIES
     private float CalculateKE(float mass, float speed)
     {
-        return 0.5f * mass * speed * speed;
+        float vel_ratio = Mathf.Sqrt(G_real / G);               //get the real velocity of the object rather than the increased simulation rate
+        return 0.5f * mass * vel_ratio*speed * vel_ratio*speed;     //convert the energy into units of M(sun)AU^2s^-2
     }
 
     private float CalculateGPE(float othermass, float mass, float distance)
     {
-        return -1 * G * othermass * mass / distance;
+        return -1 * G_real * othermass * mass / distance;       //energy in units as with KE
     }
 
-    
+    //Calculate the speed 
+    private float CalculateSpeed(Vector3 currentPos, Vector3 lastPos)
+    {
+        float v = (currentPos - lastPos).magnitude / Time.fixedDeltaTime;       //speed in units/sec --> AU/sec
+        return v;
+    }
 }

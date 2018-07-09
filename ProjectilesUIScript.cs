@@ -10,7 +10,7 @@ public class ProjectilesUIScript : MonoBehaviour {
     public float min_speed = 5;
     public float max_speed = 20;
     private float min_drag = 0;
-    private float max_drag = 1;
+    private float max_drag = 10;
 
     private void Start()
     {
@@ -48,7 +48,7 @@ public class ProjectilesUIScript : MonoBehaviour {
     {
         float newDrag = float.Parse(drag_text.text);
         newDrag += 0.1f;
-        if (newDrag >= min_drag) //max drag = 1
+        if (newDrag <= max_drag) //max drag = 10
         {
             drag_text.text = newDrag.ToString("F1");
         }
