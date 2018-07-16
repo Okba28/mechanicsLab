@@ -3,4 +3,4 @@ Unity C# scripts for MechanicsLab, a set of simulations of mechanics problems in
 
 An embedded version of the software and tutorials are available at:
 
-https://dpreid.github.io/code_space/physics_mechanicslab.html
+https://dpreid.github.io/code_space/index.html
