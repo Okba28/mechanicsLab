@@ -116,7 +116,7 @@ public class MomentumVectorScript : MonoBehaviour
             lengthText.transform.position = Camera.main.WorldToScreenPoint(startPosition + (endPosition - startPosition) / 2 + new Vector3(2, 0, 0));
             angleText.text = "Angle = " + angle.ToString("F1");
             angleText.color = vector_colour;
-            angleText.transform.position = Camera.main.WorldToScreenPoint(startPosition + (endPosition - startPosition) / 2 + new Vector3(2, 0, -1));
+            angleText.transform.position = Camera.main.WorldToScreenPoint(startPosition + (endPosition - startPosition) / 2 + new Vector3(2, 0, -3));
         }
         else
         {

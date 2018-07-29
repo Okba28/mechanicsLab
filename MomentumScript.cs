@@ -35,6 +35,9 @@ public class MomentumScript : MonoBehaviour {
         //add listeners for mass changes
         mass1.onEndEdit.AddListener(delegate { UpdateMass(); });
         mass2.onEndEdit.AddListener(delegate { UpdateMass(); });
+
+        //load the trail particles
+        
     }
 	
 	// Update is called once per frame
