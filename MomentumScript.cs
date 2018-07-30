@@ -42,17 +42,17 @@ public class MomentumScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		
+        
 	}
 
+    //actually gives an object a specific velocity rather than momentum
     public void AddMomentum()
     {
         Vector3 vel = GetVelocity(puck1, vectorHead1);
         Vector3 vel2 = GetVelocity(puck2, vectorHead2);
-        rb_1.AddForce(vel, ForceMode.VelocityChange);
-        rb_2.AddForce(vel2, ForceMode.VelocityChange);
+        rb_1.velocity = vel;
+        rb_2.velocity = vel2;
         RemoveVectors();            //remove the initialisation vectors and their labels
-
     }
 
     //All vectors and labels are given the tag "vectorArrow" allowing them to be easily removed from the scene when pucks

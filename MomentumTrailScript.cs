@@ -17,6 +17,9 @@ public class MomentumTrailScript : MonoBehaviour
     public Color particle_colour;
     //public float death_time;      //momentum trail lasts until reset.
 
+    private GameObject previous_trail_particle;
+    private Rigidbody rb;           //the rigidbody attached to this transform
+    private Vector3 velocity;
     // a list of all the trail particle gameobjects for easy destruction
     // public List<GameObject> particles = new List<GameObject>();
 
@@ -28,6 +31,7 @@ public class MomentumTrailScript : MonoBehaviour
     {
         trailParticle = Resources.Load("TrailParticle") as GameObject;
         nextTime = Time.time + deltaTime;
+        rb = transform.GetComponent<Rigidbody>();
 
         launchButton.onClick.AddListener(delegate { StartTimer(); });
     }
@@ -35,22 +39,30 @@ public class MomentumTrailScript : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (Time.time > nextTime && !launchButton.IsActive() && Time.time < stopTime)
+        //get the velocity of the puck
+        velocity = rb.velocity;
+        if (Time.time >= nextTime && !launchButton.IsActive() && Time.time < stopTime && velocity.magnitude > 0)
         {
             GameObject particle = Instantiate(trailParticle) as GameObject;     //create the trail particle
-            particle.transform.position = transform.position;                   //position it where the cannon ball is
+            
+            //particle.transform.position = transform.position;                   //position it where the cannon ball is
+            particle.transform.position = previous_trail_particle.transform.position + velocity * deltaTime;
             particle.transform.localScale = new Vector3(particle_size, particle_size, particle_size);
             particle.GetComponent<Renderer>().material.SetColor("_Color", particle_colour);
             //rend.material.shader = Shader.Find("_Color");
             //particles.Add(particle);                                            //add it to the list of particles
             nextTime = Time.time + deltaTime;                                   //update the next time a trail particle is formed
             //Destroy(particle);
+            //make this the previous particle for the next loop
+            previous_trail_particle = particle;
         }
     }
 
     private void StartTimer()
     {
         stopTime = Time.time + lifetime;
+        previous_trail_particle = transform.gameObject;
+        
     }
     
 }
