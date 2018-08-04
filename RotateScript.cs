@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-//Attached to a rotate handle on an object in order to rotate it around the x axis.
+//Attached to the ramp in order to rotate it around the x axis.
 //rampAngle stores the current angle in degrees for easy output to the UI
 
 public class RotateScript : MonoBehaviour {
@@ -44,7 +44,6 @@ public class RotateScript : MonoBehaviour {
             
             
         }
-        Debug.Log("Angle of ramp = " + GetRampAngle());
         OutputRampAngle();  //output the ramp angle in degrees to the screen
          
 	}

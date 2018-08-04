@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Ensure that friction surface is only applied to the ramp, not the box (which should always be frictionless)
-//If both objects in contact have a coefficient of friction then both are added together (and perhaps even then not exactly)
+
 //The Physics engine does not guarantee exact physics.
 
 public class CalculateForcesScript : MonoBehaviour {
@@ -35,8 +34,9 @@ public class CalculateForcesScript : MonoBehaviour {
 
     private float CalculateReaction(float weight)
     {
-        float angle = ramp.GetComponent<RotateScript>().GetRampAngle()*Mathf.Deg2Rad;     //angle in radians.
-        float reaction = weight * Mathf.Cos(angle);
+        Quaternion boxRot = mass.rotation;
+        float angle = Quaternion.Angle(boxRot, Quaternion.identity);    //the box rotation in radians - the box can only rotate around the x axis (fixed in others) so no other rotations possible
+        float reaction = weight * Mathf.Cos(angle*Mathf.Deg2Rad);
         return reaction;
     }
 
