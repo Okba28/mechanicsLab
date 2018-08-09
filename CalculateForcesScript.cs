@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+//Calculates the forces involved in the ramp scene
 //The Physics engine does not guarantee exact physics.
 
 public class CalculateForcesScript : MonoBehaviour {
@@ -49,8 +49,8 @@ public class CalculateForcesScript : MonoBehaviour {
         //float staticFriction = ramp.GetComponent<BoxCollider>().material.staticFriction;
         //float dynamicFriction = ramp.GetComponent<BoxCollider>().material.dynamicFriction;
 
-        float staticFriction = mass.GetComponent<CollisionFrictionScript>().GetFrictionCoefficient();
-        return staticFriction * reaction;
+        float friction_coeff = mass.GetComponent<CollisionFrictionScript>().GetFrictionCoefficient();
+        return friction_coeff * reaction;
     }
 
 
@@ -70,5 +70,12 @@ public class CalculateForcesScript : MonoBehaviour {
         return friction;
     }
 
+    public float GetParallelForce()
+    {
+        Quaternion boxRot = mass.rotation;
+        float angle = Quaternion.Angle(boxRot, Quaternion.identity);    //the box rotation in radians - the box can only rotate around the x axis (fixed in others) so no other rotations possible
+        float parallel = weight * Mathf.Sin(angle * Mathf.Deg2Rad);
+        return parallel;
+    }
 
 }

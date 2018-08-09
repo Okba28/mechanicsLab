@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class FreezeScript : MonoBehaviour {
 
-    //Add the objects that need to be frozen
-    public Rigidbody mass;
-    public Rigidbody ramp;
 
 	// Use this for initialization
 	void Start () {
@@ -17,13 +14,11 @@ public class FreezeScript : MonoBehaviour {
 	
 	public void Pause()
     {
-        mass.constraints = RigidbodyConstraints.FreezeAll;
-        ramp.constraints = RigidbodyConstraints.FreezeAll;
+        Time.timeScale = 0;
     }
 
     public void Unpause()
     {
-        mass.constraints = RigidbodyConstraints.None;
-        ramp.constraints = RigidbodyConstraints.None;
+        Time.timeScale = 1;
     }
 }

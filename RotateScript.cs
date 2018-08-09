@@ -30,11 +30,11 @@ public class RotateScript : MonoBehaviour {
         {
             if(Input.GetAxis("Mouse Y") > 0)    //mouse moving up
             {
-                deltaAngle += 0.5f;
+                deltaAngle += 0.1f;
             }
                 else if(Input.GetAxis("Mouse Y") < 0 && ramp.position.y > 0)   //mouse moving down, limited to 0 degrees
             {
-                deltaAngle -= 0.5f;
+                deltaAngle -= 0.1f;
             }
 
             Quaternion deltaQuat = Quaternion.AngleAxis(deltaAngle, Vector3.right);

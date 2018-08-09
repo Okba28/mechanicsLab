@@ -25,6 +25,7 @@ public class GravitationalForceScript : MonoBehaviour {
     //private float G = 4 * Mathf.PI * Mathf.PI;  //G in units of AU^3yr^-2M(sun)^-1 solar masses, AU and time period of yrs.
     private float G_real = 3.964E-14f;                   //G in units AU^3 M(sun)^-1 s^-2: since the time for the fixed update is in seconds, the velocity needs to be in seconds.
     private float G = 10f;      //increase G to speed up simulations
+    private float vel_ratio;
 
     //properties of the two bodies
     private float star_mass;        //mass is in solar masses
@@ -40,6 +41,9 @@ public class GravitationalForceScript : MonoBehaviour {
     public InputField start_distance;
     public Button resetButton;
     public Text total_energy;
+    public Text current_distance;
+    public Text planet_current_vel;
+    public Text star_current_vel;
 
     //For calculating the speed we need to store the previous position of the star and planet
     Vector3 lastPos_planet;
@@ -61,6 +65,11 @@ public class GravitationalForceScript : MonoBehaviour {
 
         lastPos_planet = planet.position;       //set last positions to the initial positions
         lastPos_star = star.position;
+
+        Time.fixedDeltaTime = 0.001f;       //in order for orbits to be calculated relatively accurately, need more frequent physics calculations
+
+        vel_ratio = Mathf.Sqrt(G_real / G);               //get the real velocity of the object rather than the increased simulation rate
+
     }
     
 
@@ -92,11 +101,12 @@ public class GravitationalForceScript : MonoBehaviour {
 
         //total energy
         float E = KE_planet + KE_star + GPE;
-
-        float E_rescale = E * (1E20f);              //rescale the energy value for outputting to UI
-        total_energy.text = E_rescale.ToString("E1");
-
-
+        //output energy in units M(sun)(AU^2)(s^-2) to UI
+        total_energy.text = E.ToString("E1");
+        //output distance and velocities
+        current_distance.text = (r.magnitude).ToString("F2");
+        planet_current_vel.text = (v_planet*vel_ratio).ToString("E2");
+        star_current_vel.text = (v_star*vel_ratio).ToString("E2");
     }
 
     //Calculate the gravitational force between the two masses
@@ -198,7 +208,7 @@ public class GravitationalForceScript : MonoBehaviour {
     //CALCULATIONS OF THE ORBITAL ENERGIES
     private float CalculateKE(float mass, float speed)
     {
-        float vel_ratio = Mathf.Sqrt(G_real / G);               //get the real velocity of the object rather than the increased simulation rate
+        //float vel_ratio = Mathf.Sqrt(G_real / G);               //get the real velocity of the object rather than the increased simulation rate
         return 0.5f * mass * vel_ratio*speed * vel_ratio*speed;     //convert the energy into units of M(sun)AU^2s^-2
     }
 
