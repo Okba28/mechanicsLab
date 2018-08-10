@@ -6,6 +6,7 @@ using UnityEngine.UI;
 //Script for generating simple harmonic motion of a free oscillator
 //With simply a spring joint and no damping (either drag on rigidbody or spring damping) the mass is still damped.
 //Therefore a periodic impulse is applied to the spring in order to maintain its amplitude: this is still not perfect.
+//This script needs to be added to the DrivenOscillationsScript as well in order to allow for mass and spring constant changes.
 
 public class SHMFreeOscillationScript : MonoBehaviour {
 
@@ -39,8 +40,6 @@ public class SHMFreeOscillationScript : MonoBehaviour {
 
         //start the clock
         nextTime = Time.time + period;      //this is the next time that the force should be applied
-        //Debug.Log("period = " + period);
-        //Debug.Log("Next time = " + nextTime);
 
         OutputToUI(oscillator_mass, k);
 
@@ -51,11 +50,9 @@ public class SHMFreeOscillationScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //Debug.Log("Time now = " + Time.time);
         if(Time.time >= nextTime)
         {
             rb.AddForce(new Vector3(0, forceMag, 0), ForceMode.Impulse);
-            //Debug.Log("Force added");
             nextTime += period;
         }
         

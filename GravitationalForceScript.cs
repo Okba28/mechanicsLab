@@ -152,7 +152,9 @@ public class GravitationalForceScript : MonoBehaviour {
        
         if (float.TryParse(planet_vel_UI.text, out planet_velocity_start))      //hmmm no need to then reassign it
         {
-            rb_planet.velocity = new Vector3(0,0,float.Parse(planet_vel_UI.text));
+            //velocities will be input in terms of the real velocity in AU/s, but need to be converted to the simulation speed
+            // via the vel_ratio.
+            rb_planet.velocity = new Vector3(0,0,float.Parse(planet_vel_UI.text)/vel_ratio);
         }
         else
         {
@@ -162,7 +164,7 @@ public class GravitationalForceScript : MonoBehaviour {
 
         if (float.TryParse(star_vel_UI.text, out star_velocity_start))      //hmmm no need to then reassign it
         {
-            rb_star.velocity = new Vector3(0,0,float.Parse(star_vel_UI.text));
+            rb_star.velocity = new Vector3(0,0,float.Parse(star_vel_UI.text)/vel_ratio);
         }
         else
         {
