@@ -13,6 +13,7 @@ using UnityEngine.UI;
 public class FallingBallViscometerScript : MonoBehaviour {
 
     public float density;           //density of ball material in kg/m3
+    public float density_fluid;    //density of the fluid that the ball falls through in kg/m3
     public float viscosity;         // viscosity of liquid in Pa.s
     public float radius;            //radius of ball in cm
     private Rigidbody rb;           //mass units of kg
@@ -33,9 +34,10 @@ public class FallingBallViscometerScript : MonoBehaviour {
         radius_input.onEndEdit.AddListener(delegate { ChangeRadius(); });
 
         //set starting properties
-        radius = 1f;
-        viscosity = 8.9E-4f;
-        density = 8050f;
+        radius = 1f;                //starts with a ball of 1cm radius
+        viscosity = 8.9E-4f;        //starts with water
+        density = 8050f;            //starts with steel ball
+        density_fluid = 1000f;     //starts with water as liquid
         rb.mass = CalculateMass(density, radius/100);
         weight = rb.mass * Physics.gravity.y;
         radius_input.text = "1";
@@ -48,14 +50,22 @@ public class FallingBallViscometerScript : MonoBehaviour {
 	void FixedUpdate () {
 
         float drag = CalculateDrag();
+        float upthrust = CalculateUpthrust();
+        rb.AddForce(new Vector3(0, upthrust, 0), ForceMode.Force);      //3 forces act on the ball: weight, upthrust and drag
         rb.AddForce(new Vector3(0,weight,0), ForceMode.Force);
         rb.AddForce(new Vector3(0, drag, 0), ForceMode.Force);
-        
-        
+    }
+
+    //Archimedes' Principle is used to calculate the upthrust/buoyancy on the sphere
+    // Upthrust = weight of fluid displaced
+    private float CalculateUpthrust()
+    {
+        float upthrust;
+        upthrust = -1*((4 / 3) * Mathf.PI * radius/100 * radius/100 * radius/100) * density_fluid * Physics.gravity.y;
+        return upthrust;
     }
 
     //Stoke's Law used to find the drag on the spherical falling ball.
-    //Only recalculate the drag when a component changes
     private float CalculateDrag()
     {
         float vel = rb.velocity.y;
@@ -105,21 +115,25 @@ public class FallingBallViscometerScript : MonoBehaviour {
         if (liquid_dropdown.value == 0)
         {
             viscosity = 8.9E-4f;
+            density_fluid = 1000f;     //density of water 1000kg/m3
         }
         //honey viscosity = 10 Pa.s
         else if (liquid_dropdown.value == 1)
         {
-            viscosity = 10f;
+            viscosity = 8.15f;
+            density_fluid = 1417f;     //honey density 1417kg/m3
         }
         //motor oil 0.2 Pa.s
         else if(liquid_dropdown.value == 2)
         {
             viscosity = 0.2f;
+            density_fluid = 865f;
         }
         //air 20 E-6 Pa.s
         else
         {
             viscosity = 20E-6f;
+            density_fluid = 1.225f;
         }
 
         ResetBallPosition();
